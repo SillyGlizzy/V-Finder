@@ -479,12 +479,16 @@ const LUCKY_QUERIES = [
   'nurse_robot type-t',
   'zundamon',
   'vocaloid',
-  'utau',
+  'utau vocaloid',
   'deco*27',
   'iyowa',
   'sasakure.uk',
   'tosho_aTe',
   'R sound design vocaloid',
+  'nayutalien vocaloid',
+  'jamie page vocaloid',
+  'sawtowne vocaloid',
+  'pinocchioP vocaloid'
 ];
 
 let luckyAudio = null;
