@@ -34,7 +34,7 @@ document.querySelectorAll('.section-header, .synth-card, .singer-card').forEach(
   revealObserver.observe(el);
 });
 
-// SYNTHSIZERS CAROUSEL
+// SYNTHESIZERS CAROUSEL
 const carousel = document.getElementById('carousel');
 const arrowLeft = document.getElementById('arrowLeft');
 const arrowRight = document.getElementById('arrowRight');
@@ -62,9 +62,14 @@ carousel.addEventListener('mousemove', (e) => {
 carousel.addEventListener('mouseup', () => { isDragging = false; carousel.style.userSelect = ''; });
 carousel.addEventListener('mouseleave', () => { isDragging = false; carousel.style.userSelect = ''; });
 
+let currentAudio = null;
+let currentPlayBtn = null;
+let luckyAudio = null;
+
+function showAudioBar(title, url) {}
+function hideAudioBar() {}
 
 // POPULAR CHART — Deezer Search API
-
 const CHART_QUERIES = [
   'looping the rooms miku',
   'mesmerizer vocaloid',
@@ -83,12 +88,18 @@ async function fetchChart() {
   grid.innerHTML = '';
 
   try {
-    const promises = CHART_QUERIES.map(q =>
-      fetch(`https://corsproxy.io/?https://api.deezer.com/search?q=${encodeURIComponent(q)}&limit=1`)
-        .then(r => r.json())
-    );
-    const results = await Promise.all(promises);
-    const tracks  = results.map(r => r.data?.[0]).filter(Boolean);
+    const results = [];
+    for (let i = 0; i < CHART_QUERIES.length; i++) {
+      const q = CHART_QUERIES[i];
+      const res = await fetch(
+        `https://corsproxy.io/?https://api.deezer.com/search?q=${encodeURIComponent(q)}&limit=1`
+      );
+      const data = await res.json();
+      results.push(data);
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+
+    const tracks = results.map(r => r.data?.[0]).filter(Boolean);
 
     spinner.style.display = 'none';
 
@@ -107,9 +118,6 @@ async function fetchChart() {
     errorEl.style.display = 'block';
   }
 }
-
-let currentAudio = null;
-let currentPlayBtn = null;
 
 function renderChartCard(track, index) {
   const grid = document.getElementById('chartGrid');
@@ -139,9 +147,6 @@ function renderChartCard(track, index) {
   if (btn) btn.addEventListener('click', () => handlePlay(btn));
 }
 
-function showAudioBar(title, url) {}
-function hideAudioBar() {}
-
 function handlePlay(btn) {
   if (luckyAudio) {
     luckyAudio.pause();
@@ -157,8 +162,8 @@ function handlePlay(btn) {
     currentAudio.pause();
     if (currentPlayBtn) { currentPlayBtn.classList.remove('playing'); currentPlayBtn.textContent = '▶'; }
   }
-  currentAudio    = new Audio(btn.dataset.preview);
-  currentPlayBtn  = btn;
+  currentAudio   = new Audio(btn.dataset.preview);
+  currentPlayBtn = btn;
   btn.classList.add('playing'); btn.textContent = '⏸';
   showAudioBar(btn.dataset.title, btn.dataset.preview);
   currentAudio.play().catch(() => {
@@ -171,14 +176,9 @@ function handlePlay(btn) {
   });
 }
 
-function showAudioBar(title, url) {
-  let bar = document.getElementById('audioBar');
-}
-
 fetchChart();
 
-// PRODUCER FINDER — Deezer API 
-
+// PRODUCER FINDER — iTunes API + local fallback
 const LOCAL_PRODUCERS = [
   {
     name: 'ryo (supercell)',
@@ -335,7 +335,7 @@ function renderItunesProducer(artist, songs, index) {
   card.innerHTML = `
     <div class="producer-thumb" style="display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:0.85rem;color:var(--blue-400);">${initials}</div>
     <div class="producer-name">${artist}</div>
-    <div class="producer-artist">🎵 via Deezer</div>
+    <div class="producer-artist">🎵 via iTunes</div>
     ${songs.slice(0, 3).map(s => `<div class="producer-song">🎵 ${s}</div>`).join('')}
     <div class="producer-links">
       <a class="producer-link" href="https://www.youtube.com/results?search_query=${encodeURIComponent(artist + ' vocaloid')}" target="_blank" rel="noopener">YouTube</a>
@@ -345,10 +345,7 @@ function renderItunesProducer(artist, songs, index) {
   grid.appendChild(card);
 }
 
-
-
 // SINGER PROFILES
-
 const SINGERS = [
   {
     name: 'Hatsune Miku',
@@ -460,8 +457,7 @@ function renderSingers() {
 
 renderSingers();
 
-// RANDOMIZER (FEELING LUCKY)
-
+// FEELING LUCKY — Random Vocaloid Track
 const LUCKY_QUERIES = [
   'hatsune miku',
   'kagamine rin',
@@ -474,24 +470,16 @@ const LUCKY_QUERIES = [
   'kasane teto',
   'kafu',
   'kaai yuki',
-  'nurse_robot type-t',
   'zundamon',
   'vocaloid',
-  'utau vocaloid',
   'deco*27',
   'iyowa',
   'sasakure.uk',
-  'tosho_aTe',
-  'R sound design vocaloid',
   'nayutalien vocaloid',
-  'jamie page vocaloid',
-  'sawtowne vocaloid',
   'pinocchioP vocaloid'
 ];
 
-let luckyAudio = null;
-
-async function fetchLuckyTrack() {
+async function fetchLuckyTrack(retries = 5) {
   const spinner     = document.getElementById('luckySpinner');
   const errorEl     = document.getElementById('luckyError');
   const card        = document.getElementById('luckyCard');
@@ -519,6 +507,7 @@ async function fetchLuckyTrack() {
     spinner.style.display = 'none';
 
     if (tracks.length === 0) {
+      if (retries > 0) return fetchLuckyTrack(retries - 1);
       placeholder.style.display = 'flex';
       errorEl.textContent = '⚠️ No preview found. Try again!';
       errorEl.style.display = 'block';
@@ -528,7 +517,13 @@ async function fetchLuckyTrack() {
     const track = tracks[Math.floor(Math.random() * tracks.length)];
     playLuckyTrack(track);
 
-  } catch (err) {}
+  } catch (err) {
+    console.error('Lucky error:', err);
+    spinner.style.display = 'none';
+    placeholder.style.display = 'flex';
+    errorEl.textContent = '⚠️ Could not fetch a track. Check your connection.';
+    errorEl.style.display = 'block';
+  }
 }
 
 function playLuckyTrack(track) {
@@ -548,10 +543,10 @@ function playLuckyTrack(track) {
   const artist  = document.getElementById('luckyArtist');
   const playBtn = document.getElementById('luckyPlayBtn');
 
-  thumb.src           = track.album?.cover_medium || '';
-  thumb.alt           = track.trackName;
-  title.textContent   = track.title  || 'Unknown Title';
-  artist.textContent  = `${track.artist?.name || '—'} · ${track.album?.title || ''}`;
+  thumb.src          = track.album?.cover_medium || '';
+  thumb.alt          = track.title;
+  title.textContent  = track.title  || 'Unknown Title';
+  artist.textContent = `${track.artist?.name || '—'} · ${track.album?.title || ''}`;
 
   card.style.display = 'flex';
 
@@ -577,6 +572,7 @@ function playLuckyTrack(track) {
 document.getElementById('luckyBtn').addEventListener('click', fetchLuckyTrack);
 
 // MODAL
+
 const modalOverlay = document.getElementById('modalOverlay');
 const modalClose = document.getElementById('modalClose');
 const modalContent = document.getElementById('modalContent');
@@ -611,7 +607,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeModal();
 });
 
-// MODAL ANIM
+// SECTION REVEAL
 const sectionObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach(entry => {
