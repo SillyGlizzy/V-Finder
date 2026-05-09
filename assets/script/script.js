@@ -1,4 +1,3 @@
-
 // NAVBAR SCROLL
 const navbar = document.getElementById('navbar'); 
 window.addEventListener('scroll', () => {
@@ -64,7 +63,7 @@ carousel.addEventListener('mouseup', () => { isDragging = false; carousel.style.
 carousel.addEventListener('mouseleave', () => { isDragging = false; carousel.style.userSelect = ''; });
 
 
-// POPULAR CHART — iTunes Search API
+// POPULAR CHART — Deezer Search API
 
 const CHART_QUERIES = [
   'looping the rooms miku',
@@ -121,7 +120,6 @@ function renderChartCard(track, index) {
   const rankLabel = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
   const rankClass = index < 3 ? 'chart-rank top' : 'chart-rank';
 
-  // Deezer fields: track.title, track.artist.name, track.album.title, track.album.cover_medium, track.preview
   card.innerHTML = `
     <div class="${rankClass}">${rankLabel}</div>
     ${track.album?.cover_medium
@@ -179,7 +177,7 @@ function showAudioBar(title, url) {
 
 fetchChart();
 
-// PRODUCER FINDER — iTunes API 
+// PRODUCER FINDER — Deezer API 
 
 const LOCAL_PRODUCERS = [
   {
@@ -516,8 +514,6 @@ async function fetchLuckyTrack() {
       `https://corsproxy.io/?https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=10`
     );
     const data = await res.json();
-
-    // Filter only tracks with a preview
     const tracks = (data.data || []).filter(t => t.preview);
 
     spinner.style.display = 'none';
@@ -532,7 +528,7 @@ async function fetchLuckyTrack() {
     const track = tracks[Math.floor(Math.random() * tracks.length)];
     playLuckyTrack(track);
 
-  } catch (err) { /* your existing catch */ }
+  } catch (err) {}
 }
 
 function playLuckyTrack(track) {
