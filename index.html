@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>V-Finder</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-inner">
+        <a class="nav-logo" href="#"> V-Finder</a>
+        <ul class="nav-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#synthesizers">Synthesizers</a></li>
+          <li><a href="#chart">Chart</a></li>
+          <li><a href="#producers">Producers</a></li>
+          <li><a href="#singers">Singers</a></li>
+          <li><a href="#lucky">Lucky</a></li>
+        </ul>
+        <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- MOBILE NAV -->
+    <div class="mobile-nav" id="mobileNav">
+      <a href="#about" class="mobile-link">About</a>
+      <a href="#synthesizers" class="mobile-link">Synthesizers</a>
+      <a href="#chart" class="mobile-link">Chart</a>
+      <a href="#producers" class="mobile-link">Producers</a>
+      <a href="#singers" class="mobile-link">Singers</a>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero" id="about">
+      <div class="hero-video-wrap">
+        <video class="hero-video" autoplay muted loop playsinline>
+          <source src="./assets/video/MMD.mp4" type="video/mp4" />
+        </video>
+        <div class="hero-video-overlay"></div>
+      </div>
+
+      <div class="hero-content fade-in">
+        <span class="hero-tag"> Discover Virtual Voices</span>
+        <h1 class="hero-title">What is a<br /><em>Virtual Singer?</em></h1>
+        <p class="hero-desc">
+          Virtual singers are software-based voice synthesizers — digital vocal
+          engines that let music producers craft songs without a human
+          performer. From the iconic cyan-haired Hatsune Miku to expressive AI
+          vocalists, these tools have spawned an entire global music culture
+          beloved for their limitless creative freedom.
+        </p>
+        <div class="hero-cta">
+          <a href="#synthesizers" class="btn btn-primary"
+            >Explore Synthesizers</a
+          >
+          <a href="#singers" class="btn btn-ghost">Meet the Singers</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SYNTHESIZERS -->
+    <section class="section" id="synthesizers">
+      <div class="section-header">
+        <h2 class="section-title">Voice Synthesizer Engines</h2>
+        <p class="section-sub">
+          The software platforms powering the virtual singer world
+        </p>
+      </div>
+
+      <div class="carousel-wrapper">
+        <button
+          class="carousel-arrow arrow-left"
+          id="arrowLeft"
+          aria-label="Scroll left"
+        >
+          &#8592;
+        </button>
+        <div class="carousel" id="carousel">
+          <a
+            class="synth-card"
+            href="https://www.crypton.co.jp/mp/pages/prod/vocaloid/"
+            target="_blank"
+            rel="noopener"
+          >
+            <div class="synth-logo-wrap" style="background: #ffffff">
+              <img
+                src="./assets/image/crypton.png"
+                alt="Vocaloid"
+                class="synth-logo"
+                onerror="
+                  this.style.display = 'none';
+                  this.nextElementSibling.style.display = 'flex';
+                "
+              />
+              <span class="synth-logo-fallback" style="display: none">🎵</span>
+            </div>
+            <h3>Vocaloid</h3>
+            <p>
+              The pioneering voice synth by Yamaha. Home to Hatsune Miku,
+              Kagamine Rin/Len, KAITO & more.
+            </p>
+            <span class="synth-tag">By Yamaha</span>
+          </a>
+
+          <a
+            class="synth-card"
+            href="https://utau.us/"
+            target="_blank"
+            rel="noopener"
+          >
+            <div class="synth-logo-wrap" style="background: #ffffff">
+              <img
+                src="./assets/image/utau.png"
+                alt="UTAU"
+                class="synth-logo"
+                onerror="
+                  this.style.display = 'none';
+                  this.nextElementSibling.style.display = 'flex';
+                "
+              />
+              <span class="synth-logo-fallback" style="display: none">🎙️</span>
+            </div>
+            <h3>UTAU</h3>
+            <p>
+              Free, open-source singing synth loved for community voicebanks.
+              Kasane Teto's birthplace.
+            </p>
+            <span class="synth-tag">Open Source · Free</span>
+          </a>
+
+          <a
+            class="synth-card"
+            href="https://dreamtonics.com/synthesizerv/"
+            target="_blank"
+            rel="noopener"
+          >
+            <div class="synth-logo-wrap" style="background: #ffffff">
+              <img
+                src="./assets/image/synthesizerv.png"
+                alt="Synthesizer V"
+                class="synth-logo"
+                onerror="
+                  this.style.display = 'none';
+                  this.nextElementSibling.style.display = 'flex';
+                "
+              />
+              <span class="synth-logo-fallback" style="display: none">🌟</span>
+            </div>
+            <h3>Synthesizer V</h3>
+            <p>
+              Modern AI-driven vocal synth with expressive realism. Features
+              Solaria, Teto AI & Tsurumaki Maki.
+            </p>
+            <span class="synth-tag">By Dreamtonics</span>
+          </a>
+
+          <a
+            class="synth-card"
+            href="https://cevio.jp/"
+            target="_blank"
+            rel="noopener"
+          >
+            <div class="synth-logo-wrap" style="background: #ffffff">
+              <img
+                src="./assets/image/cevio.svg"
+                alt="CeVIO"
+                class="synth-logo"
+                onerror="
+                  this.style.display = 'none';
+                  this.nextElementSibling.style.display = 'flex';
+                "
+              />
+              <span class="synth-logo-fallback" style="display: none">🎶</span>
+            </div>
+            <h3>CeVIO</h3>
+            <p>
+              Japanese vocal & talking synth known for natural expression.
+              Popular in doujin and VN music.
+            </p>
+            <span class="synth-tag">By CeVIO Project</span>
+          </a>
+
+          <a
+            class="synth-card"
+            href="https://www.ah-soft.com/voiceroid/"
+            target="_blank"
+            rel="noopener"
+          >
+            <div class="synth-logo-wrap" style="background: #ffffff">
+              <img
+                src="./assets/image/voiceroid.webp"
+                alt="VOICEROID"
+                class="synth-logo"
+                onerror="
+                  this.style.display = 'none';
+                  this.nextElementSibling.style.display = 'flex';
+                "
+              />
+              <span class="synth-logo-fallback" style="display: none">💬</span>
+            </div>
+            <h3>VOICEROID</h3>
+            <p>
+              Speech synthesis that doubles as a singing voice. Beloved for
+              commentary & storytelling.
+            </p>
+            <span class="synth-tag">By AH-Software</span>
+          </a>
+
+          <a
+            class="synth-card"
+            href="https://studio-neutrino.com/"
+            target="_blank"
+            rel="noopener"
+          >
+            <div class="synth-logo-wrap" style="background: #ffffff">
+              <img
+                src="./assets/image/neutrino.png"
+                alt="NEUTRINO"
+                class="synth-logo"
+                onerror="
+                  this.style.display = 'none';
+                  this.nextElementSibling.style.display = 'flex';
+                "
+              />
+              <span class="synth-logo-fallback" style="display: none">🤖</span>
+            </div>
+            <h3>NEUTRINO</h3>
+            <p>
+              Free AI singing synth using deep learning. Remarkably human-like
+              output from score data.
+            </p>
+            <span class="synth-tag">AI-Based · Free</span>
+          </a>
+        </div>
+        <button
+          class="carousel-arrow arrow-right"
+          id="arrowRight"
+          aria-label="Scroll right"
+        >
+          &#8594;
+        </button>
+      </div>
+    </section>
+
+    <!-- Top 10 Popular -->
+    <section class="section section-tinted" id="chart">
+      <div class="section-header">
+        <h2 class="section-title">Top 10 Popular Daily May 2026</h2>
+        <p class="section-sub">
+          Daily May 2026 top 10 tracks via iTunes Search API
+        </p>
+      </div>
+      <!-- Loading -->
+      <div class="spinner-wrap" id="chartSpinner">
+        <div class="spinner"></div>
+        <p>Fetching tracks…</p>
+      </div>
+
+      <!-- Error -->
+      <div class="error-msg" id="chartError" style="display: none">
+        ⚠️ Could not load tracks. Please check your connection.
+      </div>
+
+      <!-- Chart Cards -->
+      <div class="chart-grid" id="chartGrid"></div>
+    </section>
+
+    <!-- PRODUCERS -->
+    <section class="section" id="producers">
+      <div class="section-header">
+        <h2 class="section-title">Producer Finder</h2>
+        <p class="section-sub">Search for Vocaloid producers and their works</p>
+      </div>
+
+      <div class="search-bar-wrap">
+        <input
+          type="text"
+          class="search-input"
+          id="producerSearch"
+          placeholder="Search a producer… e.g. ryo, wowaka, mitchie m"
+          autocomplete="off"
+        />
+        <button class="search-btn" id="producerSearchBtn">Search</button>
+      </div>
+
+      <!-- Loading -->
+      <div class="spinner-wrap" id="producerSpinner" style="display: none">
+        <div class="spinner"></div>
+        <p>Searching producers…</p>
+      </div>
+
+      <!-- Error -->
+      <div class="error-msg" id="producerError" style="display: none"></div>
+
+      <!-- Results -->
+      <div class="producer-grid" id="producerGrid"></div>
+    </section>
+
+    <!-- ============================
+       SINGER PROFILES
+  ============================= -->
+    <section class="section section-tinted" id="singers">
+      <div class="section-header">
+        <h2 class="section-title">Popular Virtual Singers</h2>
+        <p class="section-sub">Click any card to learn more</p>
+      </div>
+
+      <div class="singers-grid" id="singersGrid"></div>
+    </section>
+
+    <!-- RANDOMIZER -->
+    <section class="section" id="lucky">
+      <div class="section-header">
+        <h2 class="section-title">Feeling Lucky?</h2>
+        <p class="section-sub">
+          Hit the button and get a random Virutal Singer track preview
+        </p>
+      </div>
+
+      <div class="lucky-wrap">
+        <div class="lucky-card" id="luckyCard" style="display: none">
+          <img class="lucky-thumb" id="luckyThumb" src="" alt="" />
+          <div class="lucky-info">
+            <div class="lucky-title" id="luckyTitle"></div>
+            <div class="lucky-artist" id="luckyArtist"></div>
+          </div>
+          <button class="lucky-play" id="luckyPlayBtn">⏸</button>
+        </div>
+
+        <div class="lucky-placeholder" id="luckyPlaceholder">
+          <span>🎲</span>
+          <p>No track loaded yet</p>
+        </div>
+
+        <button class="btn btn-primary lucky-btn" id="luckyBtn">
+          🎲 LET IT RIDE!
+        </button>
+
+        <div class="spinner-wrap" id="luckySpinner" style="display: none">
+          <div class="spinner"></div>
+          <p>Finding a track…</p>
+        </div>
+        <div class="error-msg" id="luckyError" style="display: none"></div>
+      </div>
+    </section>
+
+     <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-box" id="modalBox">
+        <button class="modal-close" id="modalClose" aria-label="Close modal">
+          ✕
+        </button>
+        <div class="modal-content" id="modalContent"></div>
+      </div>
+    </div>
+
+    <!-- FOOT 🤤 -->
+    <footer class="footer">
+      <p>V-Finder — by Rasha Arrazi 2026</p>
+      <p class="footer-sub">
+        Data sourced from iTunes Search API & curated local database.
+      </p>
+    </footer>
+
+   
+
+    <script src="assets/script/script.js"></script>
+  </body>
+</html>
