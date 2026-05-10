@@ -72,11 +72,11 @@ function hideAudioBar() {}
 
 // POPULAR CHART — iTunes Search API
 const CHART_QUERIES = [
-  'Looping the rooms',
-  'Execution Clap',
+  'Looping the rooms miku',
+  'Execution Clap teto',
   'Brain Rot Teto',
-  'Mesmerizer Vocaloid',
-  'Ghost Experience Satsuki'
+  'Mesmerizer 32ki',
+  'Ghost Experience 32ki'
 ];
 
 async function fetchChart() {
