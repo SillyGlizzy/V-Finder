@@ -62,6 +62,7 @@ carousel.addEventListener('mousemove', (e) => {
 carousel.addEventListener('mouseup', () => { isDragging = false; carousel.style.userSelect = ''; });
 carousel.addEventListener('mouseleave', () => { isDragging = false; carousel.style.userSelect = ''; });
 
+// AUDIO STATE 
 let currentAudio = null;
 let currentPlayBtn = null;
 let luckyAudio = null;
@@ -69,13 +70,13 @@ let luckyAudio = null;
 function showAudioBar(title, url) {}
 function hideAudioBar() {}
 
-// POPULAR CHART — Deezer Search API
+// POPULAR CHART — iTunes Search API
 const CHART_QUERIES = [
-  'looping the rooms miku',
-  'mesmerizer vocaloid',
-  'ghost experience satsuki',
-  'girl a siinamota',
-  'baumkuchen end credits'
+  'Looping the rooms',
+  'Execution Clap',
+  'Brain Rot Teto',
+  'Mesmerizer Vocaloid',
+  'Ghost Experience Satsuki'
 ];
 
 async function fetchChart() {
@@ -88,18 +89,12 @@ async function fetchChart() {
   grid.innerHTML = '';
 
   try {
-    const results = [];
-    for (let i = 0; i < CHART_QUERIES.length; i++) {
-      const q = CHART_QUERIES[i];
-      const res = await fetch(
-        `https://corsproxy.io/?https://api.deezer.com/search?q=${encodeURIComponent(q)}&limit=1`
-      );
-      const data = await res.json();
-      results.push(data);
-      await new Promise(resolve => setTimeout(resolve, 200));
-    }
-
-    const tracks = results.map(r => r.data?.[0]).filter(Boolean);
+    const promises = CHART_QUERIES.map(q =>
+      fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=1`)
+        .then(r => r.json())
+    );
+    const results = await Promise.all(promises);
+    const tracks  = results.map(r => r.results?.[0]).filter(Boolean);
 
     spinner.style.display = 'none';
 
@@ -130,15 +125,15 @@ function renderChartCard(track, index) {
 
   card.innerHTML = `
     <div class="${rankClass}">${rankLabel}</div>
-    ${track.album?.cover_medium
-      ? `<img class="chart-thumb" src="${track.album.cover_medium}" alt="${track.title}" loading="lazy" />`
+    ${track.artworkUrl100
+      ? `<img class="chart-thumb" src="${track.artworkUrl100}" alt="${track.trackName}" loading="lazy" />`
       : `<div class="chart-thumb-placeholder">🎵</div>`}
     <div class="chart-info">
-      <div class="chart-title">${track.title || 'Unknown Title'}</div>
-      <div class="chart-artist">${track.artist?.name || '—'} · ${track.album?.title || ''}</div>
+      <div class="chart-title">${track.trackName || 'Unknown Title'}</div>
+      <div class="chart-artist">${track.artistName || '—'} · ${track.collectionName || ''}</div>
     </div>
-    ${track.preview
-      ? `<button class="chart-play" data-preview="${track.preview}" data-title="${track.title}" aria-label="Play">▶</button>`
+    ${track.previewUrl
+      ? `<button class="chart-play" data-preview="${track.previewUrl}" data-title="${track.trackName}" aria-label="Play">▶</button>`
       : `<button class="chart-play" disabled style="opacity:.35;cursor:default;" aria-label="No preview">🚫</button>`}
   `;
   grid.appendChild(card);
@@ -352,86 +347,126 @@ const SINGERS = [
     synth: 'Vocaloid',
     emoji: '🩵',
     color: 'linear-gradient(135deg, #b3e5fc, #4dd0e1)',
-    desc: 'The world\'s most iconic virtual singer. A 16-year-old with twin teal pigtails who conquered the globe.',
-    longDesc: 'Hatsune Miku is a Vocaloid software voicebank developed by Crypton Future Media, using Yamaha\'s Vocaloid 2 synthesizer engine. Her voice is sampled from voice actress Saki Fujita. Debuting in August 2007, she became a cultural phenomenon, inspiring millions of fan-made songs, artworks, concerts, and a worldwide community.',
+    image: './assets/image/singers/miku.png',
+    wiki: 'https://vocaloid.fandom.com/wiki/Hatsune_Miku',
+    desc: 'The virtual idol who redefined digital music culture with her iconic twin-tails and limitless collaborations.',
+    longDesc: 'Hatsune Miku is a Vocaloid voicebank developed by Crypton Future Media using Yamaha’s Vocaloid engine, with her voice sampled from Saki Fujita. Since her debut in August 2007, she has grown into a worldwide phenomenon, inspiring an enormous catalog of fan-created music, illustrations, live holographic concerts, and an international creative community.',
     songs: ['World is Mine (ryo)', 'Tell Your World (kz)', 'Melt (ryo)', 'The Disappearance of Hatsune Miku (cosMo)'],
     tags: ['Vocaloid', 'Crypton', 'CV-01']
+  },
+  {
+    name: 'Kasane Teto',
+    synth: 'SynthV',
+    emoji: '🥖',
+    color: 'linear-gradient(135deg, #f8bbd9, #f48fb1)',
+    image: './assets/image/singers/teto.webp',
+    wiki: 'https://synthv.fandom.com/wiki/Kasane_Teto',
+    desc: 'From parody character to beloved icon, Teto became a legendary presence in the voice synth community.',
+    longDesc: 'Kasane Teto began as an April Fools’ joke in 2008, introduced as a fake Vocaloid. Her unexpected popularity led to the creation of an official UTAU voicebank, and later Synthesizer V versions. Over time, she evolved into a respected and widely recognized character with a dedicated global fanbase.',
+    songs: ['Kasane Territory', 'Triple Baka', 'WAVE', 'Fake Diva'],
+    tags: ['UTAU', 'SynthV', 'Fanloid Origins']
+  },
+  {
+    name: 'Kagamine Len',
+    synth: 'Vocaloid',
+    emoji: '🍌',
+    color: 'linear-gradient(135deg, #fff9c4, #fff176)',
+    image: './assets/image/singers/len.jpg',
+    wiki: 'https://vocaloid.fandom.com/wiki/Kagamine_Len',
+    desc: 'The dynamic counterpart to Rin, known for his clear, youthful tone and dramatic presence.',
+    longDesc: 'Kagamine Len is the counterpart of Kagamine Rin released by Crypton Future Media. His voice stands out in theatrical and narrative-driven songs, particularly in dramatic story series such as the Story of Evil, where his expressive delivery plays a central role.',
+    songs: ['Servant of Evil', 'Regret Message', 'Spice!', 'Ikanaide'],
+    tags: ['Vocaloid', 'Crypton', 'CV-02']
   },
   {
     name: 'Kagamine Rin',
     synth: 'Vocaloid',
     emoji: '💛',
     color: 'linear-gradient(135deg, #fff9c4, #ffeb3b)',
-    desc: 'Energetic and playful. Rin shares a "mirror image" bond with her twin Len, voiced by Asami Shimoda.',
-    longDesc: 'Kagamine Rin & Len are Vocaloid vocals developed by Crypton Future Media, debuting December 2007. They are designed as 14-year-old twins, though officially described as "mirror images." Rin\'s voice is bright and youthful, making her popular for both upbeat and emotional songs.',
+    image: './assets/image/singers/rin.jpg',
+    wiki: 'https://vocaloid.fandom.com/wiki/Kagamine_Rin',
+    desc: 'Bright, bold, and expressive — Rin brings sharp energy and emotional depth to the Kagamine duo.',
+    longDesc: 'Kagamine Rin debuted alongside Len in December 2007 as part of Crypton’s CV-02 series. Characterized by her youthful yet powerful tone, Rin excels in both high-energy tracks and emotionally intense compositions, often portraying dramatic or strong-willed characters in storytelling songs.',
     songs: ['Meltdown', 'Servant of Evil', 'Kokoro', 'Roshin Yuukai'],
     tags: ['Vocaloid', 'Crypton', 'CV-02']
   },
   {
-    name: 'Kagamine Len',
+    name: 'Megurine Luka',
     synth: 'Vocaloid',
-    emoji: '💙',
-    color: 'linear-gradient(135deg, #fff9c4, #fff176)',
-    desc: 'Rin\'s mirror twin. Len\'s voice carries a youthful boyish tone beloved in dramatic and emotional songs.',
-    longDesc: 'Len Kagamine is the male counterpart of the Kagamine pair. His voice was provided by the same voice actress (Asami Shimoda) pitched differently. He is iconic in narrative, dramatic, and theatrical Vocaloid songs.',
-    songs: ['Servant of Evil', 'Regret Message', 'Spice!', 'Ikanaide'],
-    tags: ['Vocaloid', 'Crypton', 'CV-02']
+    emoji: '🐟',
+    color: 'linear-gradient(135deg, #f8bbd0, #ce93d8)',
+    image: './assets/image/singers/luka.webp',
+    wiki: 'https://vocaloid.fandom.com/wiki/Megurine_Luka',
+    desc: 'A refined bilingual Vocaloid celebrated for her smooth tone and mature musical style.',
+    longDesc: 'Released in 2009 by Crypton Future Media, Megurine Luka was the first Vocaloid designed for both Japanese and English singing. Her controlled, elegant voice suits electronic, jazz, and emotional ballads, and her V4X update further enhanced her tonal flexibility and clarity.',
+    songs: ['Just Be Friends', 'Luka Luka★Night Fever', 'Double Lariat', 'Palette'],
+    tags: ['Vocaloid', 'Crypton', 'Female Voice', 'Bilingual']
   },
   {
     name: 'KAITO',
     synth: 'Vocaloid',
     emoji: '🔵',
     color: 'linear-gradient(135deg, #b3e5fc, #7986cb)',
-    desc: 'A deep, mature male Vocaloid with a devoted fanbase. One of Crypton\'s original voices from 2006.',
-    longDesc: 'KAITO is a Vocaloid voicebank by Crypton Future Media, first released in 2006 — making him one of the oldest Vocaloids. Known for his warm baritone voice and blue scarf, KAITO is beloved for emotional ballads and classical Japanese songs. He later received a major V3 update.',
+    image: './assets/image/singers/kaito.jpg',
+    wiki: 'https://vocaloid.fandom.com/wiki/KAITO',
+    desc: 'A warm baritone voicebank recognized for its depth, clarity, and lasting legacy.',
+    longDesc: 'KAITO debuted in 2006 as one of Crypton’s earliest Vocaloids. Known for his smooth baritone tone and composed image, he gained renewed popularity after receiving a V3 update, expanding his expressive capabilities for both classical and contemporary styles.',
     songs: ['Hajimete no Koi ga Owaru Toki', 'Ai no Scenario', 'Remote Control', 'Proof of Life'],
     tags: ['Vocaloid', 'Crypton', 'Male Voice']
   },
   {
-    name: 'Kasane Teto',
-    synth: 'UTAU',
-    emoji: '🌸',
-    color: 'linear-gradient(135deg, #f8bbd9, #f48fb1)',
-    desc: 'Originally an April Fools\' prank, Teto became one of the most beloved UTAU voicebanks ever made.',
-    longDesc: 'Kasane Teto was created on April 1, 2008 as a fictitious "new Vocaloid" prank. She became so popular that a real UTAU voicebank was created for her. She is distinguished by her twin drill-shaped hair and chimera heritage in her lore. She has a dedicated global fanbase and has since received Synthesizer V and other voice bank versions.',
-    songs: ['Teto Territory', 'WAVE', 'Fukkireta', 'Fake Diva'],
-    tags: ['UTAU', 'SynthV', 'Fanloid Origins']
+    name: 'MEIKO',
+    synth: 'Vocaloid',
+    emoji: '🔴',
+    color: 'linear-gradient(135deg, #ef9a9a, #c62828)',
+    image: './assets/image/singers/meiko.webp',
+    wiki: 'https://vocaloid.fandom.com/wiki/MEIKO',
+    desc: 'One of the earliest Japanese Vocaloids, distinguished by her strong and confident vocal tone.',
+    longDesc: 'Released in 2004 by Crypton Future Media, MEIKO was among the first Japanese-language Vocaloids. Her powerful and mature voice established her as a foundational figure in the Vocaloid lineup, later refined through a V3 update that broadened her tonal expression.',
+    songs: ['Change Me', 'Nostalogic', 'Piano x Forte x Scandal', 'Evil Food Eater Conchita'],
+    tags: ['Vocaloid', 'Crypton', 'Female Voice', 'Original Generation']
   },
   {
-    name: 'IA',
+  name: 'KAFU',
+  synth: 'CeVIO',
+  emoji: '🧊',
+  color: 'linear-gradient(135deg, #e0f7fa, #b39ddb)',
+  image: './assets/image/singers/kafu.webp',
+  wiki: 'https://cevio.fandom.com/wiki/KAFU',
+  desc: 'A soft yet piercing voicebank known for its fragile, emotional tone and indie appeal.',
+  longDesc: 'KAFU is a CeVIO AI voicebank developed by KAMITSUBAKI STUDIO and released in 2021. Based on the voice of virtual singer KAF, she is recognized for her airy, delicate timbre that conveys vulnerability and emotional intensity. KAFU is especially popular in alternative, experimental, and emotionally driven compositions, quickly becoming a favorite among modern producers.',
+  songs: ['Phony', 'Envy Baby (cover versions)', 'Traffic Jam', 'Cute na Kanojo'],
+  tags: ['CeVIO AI', 'KAMITSUBAKI STUDIO', 'Emotional Tone']
+  },
+  {
+    name: 'GUMI',
     synth: 'Vocaloid',
-    emoji: '🌙',
-    color: 'linear-gradient(135deg, #e8eaf6, #c5cae9)',
-    desc: 'Voiced by Lia from Alchemy Sound, IA carries an ethereal quality perfect for atmospheric and dreamy music.',
-    longDesc: 'IA is a Vocaloid developed by 1st Place Co. in 2012, using the voice of Japanese singer Lia. She is especially popular in the Western Vocaloid fandom for songs like "Imagination" and is the primary voice in numerous Jin/Shizen no Teki-P tracks from the Kagerou Project media franchise.',
-    songs: ['Imagination', 'Headphone Actor', 'Outer Science', 'daze'],
-    tags: ['Vocaloid', '1st Place', 'Kagerou Project']
+    emoji: '💚',
+    color: 'linear-gradient(135deg, #a5d6a7, #66bb6a)',
+    image: './assets/image/singers/gumi.webp',
+    wiki: 'https://vocaloid.fandom.com/wiki/GUMI',
+    desc: 'Versatile and vibrant, GUMI is known for her adaptability across pop, rock, and emotional tracks.',
+    longDesc: 'GUMI, also known as Megpoid, was released in 2009 by Internet Co., Ltd., featuring the voice of singer Megumi Nakajima. Praised for her flexible range and strong articulation, GUMI has become a staple in both high-energy rock songs and heartfelt ballads, supported by multiple engine updates.',
+    songs: ['Echo', 'Matryoshka', 'Mozaik Role', 'Coward Montblanc'],
+    tags: ['Vocaloid', 'Internet Co.', 'Female Voice']
   },
   {
     name: 'Flower (v flower)',
     synth: 'Vocaloid',
     emoji: '🌸',
     color: 'linear-gradient(135deg, #e8f5e9, #a5d6a7)',
-    desc: 'A cool androgynous voice that became a fan favorite for rock, edgy, and expressive music styles.',
-    longDesc: 'v flower is a Vocaloid developed by Internet Co., released in 2014. Her androgynous voice is provided by Yuzuki Yukari\'s voice actress. She\'s popular for rock and experimental songs, and her ambiguous gender presentation has made her especially beloved in LGBTQ+ and youth fan circles.',
+    image: './assets/image/singers/flower.webp',
+    wiki: 'https://vocaloid.fandom.com/wiki/Flower',
+    desc: 'An androgynous powerhouse voice favored for intense, rock-driven compositions.',
+    longDesc: 'v flower debuted in 2014 under Internet Co. Known for her sharp, expressive tone and distinctive vocal texture, she is frequently used in rock, alternative, and experimental tracks that demand emotional intensity and edge.',
     songs: ['Gimme×Gimme (with Hatsune Miku)', 'Reboot', 'Hibana', 'Drug Store'],
     tags: ['Vocaloid', 'Internet Co.', 'Androgynous']
-  },
-  {
-    name: 'Solaria',
-    synth: 'Synthesizer V',
-    emoji: '✨',
-    color: 'linear-gradient(135deg, #fce4ec, #f48fb1)',
-    desc: 'An expressive AI-powered English singing voice for Synthesizer V, loved for her clear and emotive tone.',
-    longDesc: 'Solaria is an English Synthesizer V voicebank developed by Eclipsed Sounds and published by Dreamtonics. Released in 2022, she features a bright and versatile English voice capable of deep emotional expression. She was one of the first community-produced SynthV voices to achieve wide mainstream attention in the Western virtual singer scene.',
-    songs: ['Love Me Like You Do (cover)', 'Enemy (cover)', 'Original community tracks'],
-    tags: ['Synthesizer V', 'English', 'Eclipsed Sounds']
   }
 ];
 
 function renderSingers() {
   const grid = document.getElementById('singersGrid');
-  SINGERS.forEach((singer, i) => {
+  SINGERS.forEach((singer) => {
     const card = document.createElement('div');
     card.className = 'singer-card reveal';
     card.setAttribute('role', 'button');
@@ -439,15 +474,39 @@ function renderSingers() {
     card.setAttribute('aria-label', `View ${singer.name} profile`);
 
     card.innerHTML = `
-      <div class="singer-avatar" style="background:${singer.color};">${singer.emoji}</div>
-      <div class="singer-name">${singer.name}</div>
-      <div class="singer-synth">${singer.synth}</div>
-      <div class="singer-desc">${singer.desc}</div>
+      <div class="singer-photo-wrap">
+        <img
+          class="singer-photo"
+          src="${singer.image}"
+          alt="${singer.name}"
+          loading="lazy"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="singer-avatar-fallback" style="background:${singer.color}; display:none;">${singer.emoji}</div>
+      </div>
+      <div class="singer-info">
+        <div class="singer-name">${singer.name}</div>
+        <div class="singer-synth">${singer.synth}</div>
+        <div class="singer-desc">${singer.desc}</div>
+      </div>
+      <button class="singer-wiki-btn" aria-label="Open ${singer.name} Fandom Wiki">
+        🔗 Open Fandom Wiki
+      </button>
     `;
 
-    card.addEventListener('click', () => openSingerModal(singer));
+    // Card body click 
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.singer-wiki-btn')) return;
+      openSingerModal(singer);
+    });
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') openSingerModal(singer);
+    });
+
+    // Wiki button 
+    card.querySelector('.singer-wiki-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      window.open(singer.wiki, '_blank', 'noopener');
     });
 
     grid.appendChild(card);
@@ -457,7 +516,7 @@ function renderSingers() {
 
 renderSingers();
 
-// FEELING LUCKY — Random Vocaloid Track
+// FEELING LUCKY — iTunes Search API (same reason as chart)
 const LUCKY_QUERIES = [
   'hatsune miku',
   'kagamine rin',
@@ -468,15 +527,21 @@ const LUCKY_QUERIES = [
   'ia vocaloid',
   'v-flower vocaloid',
   'kasane teto',
-  'kafu',
-  'kaai yuki',
+  'kafu vocaloid',
+  'kaai yuki vocaloid',
   'zundamon',
-  'vocaloid',
+  'nurse_robot type-t',
   'deco*27',
-  'iyowa',
-  'sasakure.uk',
+  'iyowa vocaloid',
+  'sasakure.uk vocaloid',
   'nayutalien vocaloid',
-  'pinocchioP vocaloid'
+  'pinocchioP vocaloid',
+  'tosho_aTe',
+  'R sound design vocaloid',
+  'MIMI vocaloid',
+  'pinocchioP vocaloid',
+  'jamie paige teto',
+  'sawtowne vocaloid'
 ];
 
 async function fetchLuckyTrack(retries = 5) {
@@ -498,11 +563,11 @@ async function fetchLuckyTrack(retries = 5) {
 
   try {
     const query = LUCKY_QUERIES[Math.floor(Math.random() * LUCKY_QUERIES.length)];
-    const res = await fetch(
-      `https://corsproxy.io/?https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=10`
+    const res   = await fetch(
+      `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&limit=20`
     );
-    const data = await res.json();
-    const tracks = (data.data || []).filter(t => t.preview);
+    const data  = await res.json();
+    const tracks = (data.results || []).filter(t => t.previewUrl);
 
     spinner.style.display = 'none';
 
@@ -543,14 +608,14 @@ function playLuckyTrack(track) {
   const artist  = document.getElementById('luckyArtist');
   const playBtn = document.getElementById('luckyPlayBtn');
 
-  thumb.src          = track.album?.cover_medium || '';
-  thumb.alt          = track.title;
-  title.textContent  = track.title  || 'Unknown Title';
-  artist.textContent = `${track.artist?.name || '—'} · ${track.album?.title || ''}`;
+  thumb.src          = track.artworkUrl100 || '';
+  thumb.alt          = track.trackName;
+  title.textContent  = track.trackName  || 'Unknown Title';
+  artist.textContent = `${track.artistName || '—'} · ${track.collectionName || ''}`;
 
   card.style.display = 'flex';
 
-  luckyAudio = new Audio(track.preview);
+  luckyAudio = new Audio(track.previewUrl);
   luckyAudio.play().catch(() => {});
   playBtn.textContent = '⏸';
 
@@ -572,14 +637,21 @@ function playLuckyTrack(track) {
 document.getElementById('luckyBtn').addEventListener('click', fetchLuckyTrack);
 
 // MODAL
-
 const modalOverlay = document.getElementById('modalOverlay');
 const modalClose = document.getElementById('modalClose');
 const modalContent = document.getElementById('modalContent');
 
 function openSingerModal(singer) {
   modalContent.innerHTML = `
-    <div class="modal-avatar" style="background:${singer.color};">${singer.emoji}</div>
+    <div class="modal-avatar">
+      <img
+        class="modal-avatar-img"
+        src="${singer.image}"
+        alt="${singer.name}"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+      />
+      <div class="modal-avatar-fallback" style="background:${singer.color}; display:none;">${singer.emoji}</div>
+    </div>
     <div class="modal-name">${singer.name}</div>
     <div class="modal-meta">
       ${singer.tags.map(t => `<span class="modal-tag">${t}</span>`).join('')}
@@ -589,6 +661,9 @@ function openSingerModal(singer) {
       <h4>🎵 Notable Songs</h4>
       ${singer.songs.map(s => `<div class="modal-song-item">${s}</div>`).join('')}
     </div>
+    <a class="modal-wiki-btn" href="${singer.wiki}" target="_blank" rel="noopener">
+      🔗 View Full Profile on Fandom Wiki
+    </a>
   `;
   modalOverlay.classList.add('open');
   document.body.style.overflow = 'hidden';
