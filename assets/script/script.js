@@ -75,8 +75,8 @@ const CHART_QUERIES = [
   'Looping the rooms miku',
   'Execution Clap teto',
   'Brain Rot Teto',
-  'Mesmerizer satsuki',
-  'Ghost Experience satsuki'
+  'Mesmerizer miku',
+  'Ghost Experience teto'
 ];
 
 async function fetchChart() {
